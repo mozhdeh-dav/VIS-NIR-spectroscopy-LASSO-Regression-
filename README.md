@@ -1,6 +1,40 @@
-My master's thesis delved into the prediction of soil properties, including Soil Organic Carbon (SOC), P, Mg, K, Clay, and Sand, within a test field situated in eastern Germany. 
-Conducted at the Leibniz Institute for Agricultural Engineering and Bioeconomy in Potsdam, the research utilized a VIS-NIR spectrometer. Our primary challenge lay in 
-the high correlation among the collected wavelengths, necessitating the identification of the optimal method to ensure the utmost precision in our predictions. Furthermore, the 
-study faced constraints due to the limited number of samples available, comprising a total of 151 samples from four different depths within the field.
-Here, I present a portion of the code developed to predict Soil Organic Carbon, employing the LASSO regressor. This approach aimed to pinpoint the most pertinent features, thereby 
-enhancing prediction accuracy while minimizing bias in our estimations. It's worth noting that Soil Organic Carbon presents one of the most formidable properties to forecast accurately.
+# VIS-NIR Spectroscopy & LASSO Regression for Soil Organic Carbon Prediction
+
+Feature selection and model calibration for predicting Soil Organic Carbon (SOC) from VIS-NIR spectroscopy data, using LASSO regression and engineered spectral band-ratio indices. This repository presents a portion of the analysis developed for a Master's thesis.
+
+## Background
+
+This work was conducted at the **Leibniz Institute for Agricultural Engineering and Bioeconomy (ATB), Potsdam**, as part of a Master's thesis predicting several soil properties — Soil Organic Carbon (SOC), Phosphorus, Magnesium, Potassium, Clay, and Sand content — from VIS-NIR spectrometer measurements collected at a test field in eastern Germany.
+
+The main challenge: VIS-NIR spectra contain hundreds of highly correlated wavelength bands, and the dataset was limited to 151 soil samples across four depths (0–15, 15–30, 30–60, 60–90 cm). This required careful feature selection to avoid overfitting while retaining predictive power — SOC is widely considered one of the more difficult soil properties to predict accurately from spectral data.
+
+This repository focuses specifically on the SOC prediction pipeline, which achieved the best performance among the properties studied.
+
+## Method
+
+1. **Data split** — 12 held-out test samples per depth, remaining samples used for training
+2. **Preprocessing** — feature scaling via `StandardScaler`
+3. **LASSO feature selection** — grid search over regularization strength (alpha) to identify the most informative wavelengths; coefficients used to rank feature importance
+4. **Spectral index generation** — from the top 30 LASSO-selected wavelengths, generated engineered dual-band (NDI, SRI) and triple-band (TBI) ratio indices, to capture non-linear relationships between wavelengths and SOC
+5. **Model calibration** — nested cross-validation (10-fold outer/inner) with a LASSO pipeline, chosen due to the small sample size, to obtain unbiased performance estimates without a separate holdout validation set
+6. **Visualization** — predicted vs. observed SOC across soil depth
+
+## Results
+
+| Stage | RMSE | R² |
+|---|---|---|
+| LASSO, all wavelengths | 0.433 | — |
+| LASSO, top 30 selected wavelengths | 0.499 | — |
+| Final model (triple-band index, nested CV) | 0.589 | 0.426 |
+
+Final model additional metrics: MAE ≈ 0.44, RPIQ ≈ 0.58.
+
+The triple-band index derived from LASSO-selected wavelengths outperformed the raw wavelength-based LASSO model, suggesting that band-ratio transformations capture additional structure relevant to SOC prediction beyond individual wavelength intensities.
+
+## Tools
+
+- Python, pandas, NumPy, scikit-learn (Lasso, Pipeline, GridSearchCV, nested cross-validation), Matplotlib
+
+## Notes
+
+This repository contains a representative excerpt of a larger thesis pipeline (which covered 7 soil properties across 4 depths, ~126 generated datasets in total). The raw spectroscopy dataset and some intermediate output files referenced in the notebook are not included here, as they are part of the broader unpublished thesis dataset.
