@@ -29,7 +29,11 @@ This repository focuses specifically on the SOC prediction pipeline, which achie
 
 Final model additional metrics: MAE ≈ 0.44, RPIQ ≈ 0.58.
 
+![Measured vs Predicted SOC](measured_vs_predicted_soc.png)
+
 The triple-band index derived from LASSO-selected wavelengths outperformed the raw wavelength-based LASSO model, suggesting that band-ratio transformations capture additional structure relevant to SOC prediction beyond individual wavelength intensities.
+
+Predictions track the 1:1 line reasonably well in the low-to-mid SOC range (0–2 g/kg), where the majority of samples fall, with a sensible depth gradient — deeper soil layers (60–90 cm) cluster at lower SOC values, consistent with the known concentration of organic carbon near the surface. Predictions become less reliable at the higher end of the SOC range (above ~3 g/kg), where fewer training samples were available — a common limitation in spectroscopy calibration with small, field-scale datasets.
 
 ## Tools
 
